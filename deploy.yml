@@ -1,8 +1,17 @@
 ---
+-hosts: localhost
+ connection: local
+ gather_facts: false
+ user: root
+ tasks:
+ - name: Add .pem key to ssh agent
+   shell: |
+    chmod 600 ~/myec2key.pem
+    ssh-agent bash
+    ssh-add  ~/myec2key.pem
+
 - hosts: webservers
   sudo: yes
-  pre_tasks:
-    - include_vars: variables.yml
   tasks:
   - name: copy id_rsa to host
     copy:
