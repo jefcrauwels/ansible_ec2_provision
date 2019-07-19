@@ -1,0 +1,10 @@
+ec2_region: "us-east-1"
+ec2_instance_type: "t2.micro"
+ec2_image: "${}"
+ec2_keypair: "${ec2_keypair}"
+ec2_volume_size: 8
+ec2_count: 1
+ec2_security_group_id: "${}"
+ec2_subnet_id: "${}"
+ec2_tag_Type: "webservers"
+ec2_tag_Role: "NodeProduction"

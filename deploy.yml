@@ -1,0 +1,55 @@
+---
+- hosts: webservers
+  sudo: yes
+  pre_tasks:
+    - include_vars: variables.yml
+  tasks:
+  - name: copy id_rsa to host
+    copy:
+      src: ~/.ssh/id_rsa
+      dest: ~/.ssh
+      mode: '600'
+  
+  - name: copy id_rsa.pub to host
+    copy:
+      src: ~/.ssh/id_rsa.pub
+      dest: ~/.ssh
+
+  - name: add GitHub to known_hosts
+    shell: ssh-keyscan -H -t rsa github.com
+
+  - name: clone repo
+    git:
+      repo: git@github.com:jefcrauwels/pipelineprototype.git
+      dest: "~/pipelineprototype"
+      version: master
+      accept_hostkey: yes
+      key_file: "~/.ssh/id_rsa"
+
+  - name: Install Node.js
+    shell: |
+      curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash – 
+      sudo apt-get install -y nodejs
+
+  - name: Install npm
+    apt: name=npm update_cache=yes state=latest
+  
+  - name: Install nodemon
+    npm:
+      name: nodemon
+      global: yes
+  
+  - name: Install pm2
+    npm:
+      name: pm2
+      global: yes
+
+  - name: Install other packages (express, ejs...)
+    npm:
+      path: ~/pipelineprototype
+      
+  - name: Restart application
+    shell: |
+      cd ~/pipelineprototype
+      pm2 restart ecosystem.config.js
+      
