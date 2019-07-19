@@ -31,7 +31,7 @@
 
     - add_host:
         name: "{{ item.public_ip }}"
-        groups: tag_Type_{{ec2_tag_Type}}
+        groups: "{{ ec2_tag_Type }}"
         ec2_region: "{{ ec2_region }}"
         ec2_tag_Type: "{{ ec2_tag_Type}}"
         ec2_tag_Role: "{{ ec2_tag_Role }}"
