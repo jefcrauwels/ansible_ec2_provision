@@ -1,15 +1,4 @@
 ---
--hosts: localhost
- connection: local
- gather_facts: false
- user: root
- tasks:
- - name: Add .pem key to ssh agent
-   shell: |
-    chmod 600 ~/myec2key.pem
-    ssh-agent bash
-    ssh-add  ~/myec2key.pem
-
 - hosts: webservers
   sudo: yes
   tasks:
@@ -35,13 +24,33 @@
       accept_hostkey: yes
       key_file: "~/.ssh/id_rsa"
 
-  - name: Install Node.js
-    shell: |
-      curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash – 
-      sudo apt-get install -y nodejs
+  - name: Node.js - Get script
+    get_url:
+      url: "http://deb.nodesource.com/setup_8.x"
+      dest: "~/nodejs.sh"
+
+  - name: Node.js - Set execution permission to script
+    file:
+      path: "~/nodejs.sh"
+      mode: "u+x"
+
+  - name: Node.js - Execute installation script
+    shell: "~/nodejs.sh"
+
+  - name: Node.js - Remove installation script
+    file:
+      path: "~/nodejs.sh"
+      state: absent
+
+  - name: Node.js - Install Node.js
+    apt: name={{ item }} state=present update_cache=yes
+    with_items:
+      - build-essential
+      - nodejs
 
   - name: Install npm
-    apt: name=npm update_cache=yes state=latest
+    npm: 
+      path: ~/pipelineprototype
   
   - name: Install nodemon
     npm:

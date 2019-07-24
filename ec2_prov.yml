@@ -41,6 +41,14 @@
     - name: Wait for the instances to boot by checking the ssh port
       wait_for: host={{item.public_ip}} port=22 delay=15 timeout=300 state=started
       with_items: "{{ ec2.instances }}"
+    
+    - name: Save IP to inventory file
+      sudo: yes
+      lineinfile:
+        dest: "{{hosts_file}}"
+        insertafter: '\[webservers\]'
+        line: "{{item.public_ip}} ansible_user=ubuntu ansible_ssh_private_key_file=~/workspace/<YOUR_KEY.PEM>.pem"
+      with_items: "{{ec2.instances}}"
 
   post_tasks:
     - name: refresh hosts inventory list
