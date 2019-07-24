@@ -18,7 +18,7 @@
 
   - name: clone repo
     git:
-      repo: git@github.com:jefcrauwels/pipelineprototype.git
+      repo: git@github.com:<YOUR_GITHUB_USERNAME>/pipelineprototype.git
       dest: "~/pipelineprototype"
       version: master
       accept_hostkey: yes
